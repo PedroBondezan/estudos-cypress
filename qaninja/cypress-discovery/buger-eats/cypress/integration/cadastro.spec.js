@@ -43,6 +43,8 @@ describe('cadastro', () => {
 
         cy.get('input[accept^="image"]').attachFile('/image/' + entregador.cnh)
 
+        //pedro
+
 
 
 

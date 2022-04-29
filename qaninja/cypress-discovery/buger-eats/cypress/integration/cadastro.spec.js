@@ -1,54 +1,79 @@
-describe('cadastro', () => {
+import SignupPage from '../pages/SignupPage'
+
+describe('Cadastro', () => {
+
+    // before(function() {
+    //     cy.log('Tudo aqui é executado uma única vez ANTES de TODOS os casos de testes')
+    // })
+
+    // beforeEach(function() {
+    //     cy.log('Tudo aqui é executado sempre ANTES de CADA caso de teste')
+    // })
+
+    // after(function() {
+    //     cy.log('Tudo aqui é executado uma única vez DEPOIS de TODOS os casos de testes')
+    // })
+
+    // afterEach(function() {
+    //     cy.log('Tudo aqui é executado sempre DEPOIS de CADA caso de teste')
+    // })
+
     it('Usuário deve se tornar um entregador', () => {
-        cy.viewport(1440, 900)
-        cy.visit('https://buger-eats.vercel.app')
-
-        cy.get('a[href="/deliver"]').click()
-        cy.get('#page-deliver form h1').should('have.text', 'Cadastre-se para  fazer entregas')
-
-        var entregador = {
-            nome: 'Pedro Botter Bondezan',
+        var deliver = {
+            name: 'Pedro Botter Bondezan',
             cpf: '00000078910',
             email: 'pedro.pedro@gmail.com',
             whatsapp: '11999999999',
-            endereco: {
-                cep:'02739020',
-                rua:'Rua Amaraji',
-                numero:'62',
-                complemento: 'Casa',
-                bairro: 'Itaberaba',
-                cidade_uf: 'São Paulo/SP'
+            address: {
+                postalcode: '02739020',
+                street: 'Rua Amaraji',
+                number: '62',
+                details: 'Casa',
+                district: 'Itaberaba',
+                city_uf: 'São Paulo/SP'
             },
-            metodo_entrega: 'Moto',
+            delivery_method: 'Moto',
             cnh: 'cnh-digital.jpg'
 
         }
 
-        cy.get('input[name="name"]').type(entregador.nome)
-        cy.get('input[name="cpf"]').type(entregador.cpf)
-        cy.get('input[name="email"]').type(entregador.email)
-        cy.get('input[name="whatsapp"]').type(entregador.whatsapp)
+        var signup = new SignupPage()
+        signup.go()
+        signup.fillForm(deliver)
+        signup.submit()
 
-        cy.get('input[name="postalcode"]').type(entregador.endereco.cep)
-        cy.get('input[type=button][value="Buscar CEP"]').click()
-
-        cy.get('input[name="address-number"]').type(entregador.endereco.numero)
-        cy.get('input[name="address-details"]').type(entregador.endereco.complemento)
-
-        cy.get('input[name="address"]').should('have.value', entregador.endereco.rua)
-        cy.get('input[name="district"]').should('have.value', entregador.endereco.bairro)
-        cy.get('input[name="city-uf"]').should('have.value', entregador.endereco.cidade_uf)
-
-        cy.contains('.delivery-method li', entregador.metodo_entrega).click()
-
-        cy.get('input[accept^="image"]').attachFile('/image/' + entregador.cnh)
-
-        //pedro
-
-
-
-
-
+        const expectedMessage = 'Recebemos os seus dados. Fique de olho na sua caixa de email, pois e em breve retornamos o contato.'
+        signup.modalContentShouldBe(expectedMessage)
 
     })
+
+    it('CPF incorreto', () => {
+
+        var deliver = {
+            name: 'Pedro Botter Bondezan',
+            cpf: '000000789AA',
+            email: 'pedro.pedro@gmail.com',
+            whatsapp: '11999999999',
+            address: {
+                postalcode: '02739020',
+                street: 'Rua Amaraji',
+                number: '62',
+                details: 'Casa',
+                district: 'Itaberaba',
+                city_uf: 'São Paulo/SP'
+            },
+            delivery_method: 'Moto',
+            cnh: 'cnh-digital.jpg'
+
+        }
+
+        var signup = new SignupPage()
+
+        signup.go()
+        signup.fillForm(deliver)
+        signup.submit()
+        signup.alertMessageShouldBe('Oops! CPF inválido')
+    })
+
+
 })
